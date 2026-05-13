@@ -18,30 +18,21 @@ const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 // CONFIGURACIÓN DE ORIGINS PERMITIDOS
 // ==========================================
 const allowedOrigins = [
-  FRONTEND_URL,
-  'http://localhost:3000'
-  
-];
+  "http://localhost:3000",
+  "https://cafe-express.tonav-tech.online",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
 // ==========================================
 // CONFIGURACIÓN DE CORS 
 // ==========================================
 const corsOptions = {
   origin: function(origin, callback) {
     
-    if (!origin) {
+    if (!origin || allowedOrigins.includes(origin)) {
       return callback(null, true);
+    }else{
+         callback(new Error(`CORS bloqueado para origin: ${origin}`));
     }
-    
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    
-  
-    if (process.env.NODE_ENV === 'development') {
-      console.warn(`CORS bloqueado para origen: ${origin}`);
-    }
-    
-    return callback(new Error('CORS no permitido'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
