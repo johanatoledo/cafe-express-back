@@ -70,7 +70,7 @@ app.use(express.json());
 // ==========================================
 app.get("/", (req, res) => {
   res.json({
-    message: "API Chifa Express funcionando correctamente",
+    message: "API cafe Express funcionando correctamente",
   });
 });
 
