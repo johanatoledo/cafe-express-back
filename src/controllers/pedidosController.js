@@ -8,11 +8,38 @@ import {
 
 export async function crearPedido(req, res) {
   try {
-    const { cliente_nombre, productos, total, yape_operacion } = req.body;
+    const {
+      cliente_nombre,
+      tipo_pedido,
+      productos,
+      total,
+      yape_operacion,
+    } = req.body;
 
-    if (!cliente_nombre || !Array.isArray(productos) || productos.length === 0) {
+    if (!cliente_nombre || cliente_nombre.trim() === "") {
       return res.status(400).json({
-        message: "El nombre del cliente y los productos son obligatorios",
+        message: "El nombre del cliente es obligatorio",
+      });
+    }
+
+    if (!tipo_pedido) {
+      return res.status(400).json({
+        message: "Debe indicar si el pedido es para llevar o para consumir en el restaurante",
+      });
+    }
+
+    if (
+      tipo_pedido !== "restaurante" &&
+      tipo_pedido !== "llevar"
+    ) {
+      return res.status(400).json({
+        message: "Tipo de pedido no válido",
+      });
+    }
+
+    if (!Array.isArray(productos) || productos.length === 0) {
+      return res.status(400).json({
+        message: "Debe agregar al menos un producto",
       });
     }
 
@@ -22,7 +49,7 @@ export async function crearPedido(req, res) {
       });
     }
 
-    if (!yape_operacion) {
+    if (!yape_operacion || yape_operacion.trim() === "") {
       return res.status(400).json({
         message: "El ID de operación Yape es obligatorio",
       });
@@ -30,6 +57,7 @@ export async function crearPedido(req, res) {
 
     const pedidoId = await crearPedidoModel({
       cliente_nombre,
+      tipo_pedido,
       productos,
       total,
       yape_operacion,
@@ -66,20 +94,25 @@ export async function obtenerPedidos(req, res) {
 
 export async function obtenerPedidoPorId(req, res) {
   try {
-    const { id } = req.params; // Next.js enviará el ID aquí
+    const { id } = req.params;
 
     await actualizarPedidosListosModel();
 
     const pedido = await obtenerPedidoPorIdModel(id);
 
     if (!pedido) {
-      return res.status(404).json({ message: "Pedido no encontrado" });
+      return res.status(404).json({
+        message: "Pedido no encontrado",
+      });
     }
 
     return res.status(200).json(pedido);
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Error al obtener el pedido" });
+    console.error("Error al obtener pedido:", error);
+
+    return res.status(500).json({
+      message: "Error al obtener el pedido",
+    });
   }
 }
 
