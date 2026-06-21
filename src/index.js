@@ -3,9 +3,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import pedidosRoutes from "./routes/pedidos.routes.js";
 import { db } from "./config/db.js";
-import path from "path";
+import { resolve } from "path";
 
-dotenv.config({ path: path.resolve(process.cwd(), ".env") });
+dotenv.config({ path: resolve(process.cwd(), ".env") });
 
 const app = express();
 
