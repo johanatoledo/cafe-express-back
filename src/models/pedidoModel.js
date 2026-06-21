@@ -1,12 +1,6 @@
 import { db } from "../config/db.js";
 
-export async function crearPedidoModel({
-  cliente_nombre,
-  tipo_pedido,
-  productos,
-  total,
-  yape_operacion,
-}) {
+export async function crearPedidoModel({cliente_nombre, tipo_pedido, productos, total, yape_operacion }) {
   const [result] = await db.query(
     `
     INSERT INTO pedidos
@@ -36,7 +30,7 @@ export async function crearPedidoModel({
 export async function obtenerPedidosModel() {
   const [rows] = await db.query(
     `
-    SELECT id, cliente_nombre, tipo_pedido, productos, total, yape_operacion, estado, creado_en, actualizado_en FROM pedidos WHERE estado != 'entregado' ORDER BY creado_en ASC
+    SELECT id, cliente_nombre, tipo_pedido, ubicacion, productos, total, yape_operacion, estado, creado_en, actualizado_en FROM pedidos WHERE estado != 'entregado' ORDER BY creado_en ASC
     `
   );
 
@@ -46,13 +40,40 @@ export async function obtenerPedidosModel() {
 export async function obtenerPedidoPorIdModel(id) {
   const [rows] = await db.query(
     `
-    SELECT id, cliente_nombre, tipo_pedido, productos, total, yape_operacion, estado, creado_en, actualizado_en FROM pedidos WHERE id = ? LIMIT 1
+    SELECT id, cliente_nombre, tipo_pedido, ubicacion, productos, total, yape_operacion, estado, creado_en, actualizado_en FROM pedidos WHERE id = ? LIMIT 1
     `,
     [id]
   );
 
   return rows[0];
 }
+
+export async function confirmarPagoPedidoModel(id) {
+  const [result] = await db.query(
+    `
+    UPDATE pedidos
+    SET pago_verificado = TRUE
+    WHERE id = ?
+    `,
+    [id]
+  );
+
+  return result.affectedRows;
+}
+
+export async function asignarUbicacionPedidoModel(id, ubicacion) {
+  const [result] = await db.query(
+    `
+    UPDATE pedidos
+    SET ubicacion = ?
+    WHERE id = ?
+    `,
+    [ubicacion, id]
+  );
+
+  return result.affectedRows;
+}
+
 
 export async function marcarPedidoEntregadoModel(id) {
   const [result] = await db.query(

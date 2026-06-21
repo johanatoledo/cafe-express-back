@@ -1,5 +1,7 @@
 import {
   actualizarPedidosListosModel,
+  asignarUbicacionPedidoModel,
+  confirmarPagoPedidoModel,
   crearPedidoModel,
   marcarPedidoEntregadoModel,
   obtenerPedidoPorIdModel,
@@ -61,7 +63,7 @@ export async function crearPedido(req, res) {
       productos,
       total,
       yape_operacion,
-    });
+});
 
     return res.status(201).json({
       message: "Pedido creado correctamente",
@@ -115,6 +117,72 @@ export async function obtenerPedidoPorId(req, res) {
     });
   }
 }
+
+
+export async function confirmarPagoPedido(req, res) {
+  try {
+    const { id } = req.params;
+
+    const affectedRows = await confirmarPagoPedidoModel(id);
+
+    if (affectedRows === 0) {
+      return res.status(404).json({
+        message: "Pedido no encontrado",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Pago verificado correctamente",
+      pedidoId: Number(id),
+      pago_verificado: true,
+    });
+  } catch (error) {
+    console.error("Error al confirmar pago:", error);
+
+    return res.status(500).json({
+      message: "Error interno al confirmar el pago",
+    });
+  }
+}
+
+export async function asignarUbicacionPedido(req, res) {
+  try {
+    const { id } = req.params;
+    const { ubicacion } = req.body;
+
+    if (!ubicacion || ubicacion.trim() === "") {
+      return res.status(400).json({
+        message: "La ubicación o mesa es obligatoria",
+      });
+    }
+
+    const ubicacionLimpia = ubicacion.trim();
+
+    const affectedRows = await asignarUbicacionPedidoModel(
+      id,
+      ubicacionLimpia
+    );
+
+    if (affectedRows === 0) {
+      return res.status(404).json({
+        message: "Pedido no encontrado",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Ubicación asignada correctamente",
+      pedidoId: Number(id),
+      ubicacion: ubicacionLimpia,
+    });
+  } catch (error) {
+    console.error("Error al asignar ubicación:", error);
+
+    return res.status(500).json({
+      message: "Error interno al asignar ubicación",
+    });
+  }
+}
+
 
 export async function marcarPedidoEntregado(req, res) {
   try {
