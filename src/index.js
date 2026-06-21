@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import pedidosRoutes from "./routes/pedidos.routes.js";
 import { db } from "./config/db.js";
 
-dotenv.config();
+dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 
 const app = express();
 
