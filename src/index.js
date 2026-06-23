@@ -1,11 +1,12 @@
+import dotenv from "dotenv";
+import { resolve } from "path";
+dotenv.config({ path: resolve(process.cwd(), ".env") });
+
+
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import pedidosRoutes from "./routes/pedidos.routes.js";
 import { db } from "./config/db.js";
-import { resolve } from "path";
-
-dotenv.config({ path: resolve(process.cwd(), ".env") });
 
 const app = express();
 
