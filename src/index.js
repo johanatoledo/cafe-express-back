@@ -1,8 +1,4 @@
 import dotenv from "dotenv";
-import { resolve } from "path";
-dotenv.config({ path: resolve(process.cwd(), ".env") });
-
-
 import express from "express";
 import cors from "cors";
 import pedidosRoutes from "./routes/pedidos.routes.js";
